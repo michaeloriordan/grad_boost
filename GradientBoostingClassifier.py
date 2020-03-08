@@ -18,8 +18,6 @@ class GradientBoostingClassifier:
     def __init__(self, n_estimators=100, max_depth=3, max_features='sqrt',
                  min_samples_split=2, min_samples_leaf=1, learning_rate=0.1,
                  max_split_values=100):
-        self.base = None
-        self.trees = []
         self.n_estimators = n_estimators
         self.max_depth = max_depth
         self.max_features = max_features
@@ -30,6 +28,7 @@ class GradientBoostingClassifier:
 
     def fit(self, X, y):
         self.base = BaseEstimator().fit(X, y)
+        self.trees = []
 
         y_pred = self.base.predict(X)
 
