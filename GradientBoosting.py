@@ -19,12 +19,14 @@ class GradientBoostingRegressor:
                  min_samples_split=2, min_samples_leaf=1, learning_rate=1.0,
                  max_split_values=100):
         self.n_estimators = n_estimators
-        self.max_depth = max_depth
-        self.max_features = max_features
-        self.min_samples_split = min_samples_split
-        self.min_samples_leaf = min_samples_leaf
         self.learning_rate = learning_rate
-        self.max_split_values = max_split_values
+        self.tree_params = {
+            'max_depth': max_depth,
+            'max_features': max_features,
+            'min_samples_split': min_samples_split,
+            'min_samples_leaf': min_samples_leaf,
+            'max_split_values': max_split_values
+        }
 
     def fit(self, X, y):
         self.base = MeanBaseEstimator().fit(X, y)
@@ -35,12 +37,7 @@ class GradientBoostingRegressor:
         for i in range(self.n_estimators):
             error = y - y_pred
 
-            t = DecisionTreeRegressor(max_depth=self.max_depth,
-                                      max_features=self.max_features,
-                                      min_samples_split=self.min_samples_split,
-                                      min_samples_leaf=self.min_samples_split,
-                                      max_split_values=self.max_split_values)
-            t = t.fit(X, error)
+            t = DecisionTreeRegressor(**self.tree_params).fit(X, error)
             self.trees.append(t)
 
             y_pred += self.learning_rate * t.predict(X)
@@ -67,12 +64,14 @@ class GradientBoostingClassifier:
                  min_samples_split=2, min_samples_leaf=1, learning_rate=1.0,
                  max_split_values=100):
         self.n_estimators = n_estimators
-        self.max_depth = max_depth
-        self.max_features = max_features
-        self.min_samples_split = min_samples_split
-        self.min_samples_leaf = min_samples_leaf
         self.learning_rate = learning_rate
-        self.max_split_values = max_split_values
+        self.tree_params = {
+            'max_depth': max_depth,
+            'max_features': max_features,
+            'min_samples_split': min_samples_split,
+            'min_samples_leaf': min_samples_leaf,
+            'max_split_values': max_split_values
+        }
 
     def fit(self, X, y):
         self.base = MeanBaseEstimator().fit(X, y)
@@ -84,12 +83,7 @@ class GradientBoostingClassifier:
         for i in range(self.n_estimators):
             error = y - y_pred  # gradient of cross entropy wrt log odds
 
-            t = DecisionTreeRegressor(max_depth=self.max_depth,
-                                      max_features=self.max_features,
-                                      min_samples_split=self.min_samples_split,
-                                      min_samples_leaf=self.min_samples_split,
-                                      max_split_values=self.max_split_values)
-            t = t.fit(X, error)
+            t = DecisionTreeRegressor(**self.tree_params).fit(X, error)
             self.trees.append(t)
 
             lo += self.learning_rate * t.predict(X)
